@@ -25,7 +25,7 @@ function DashBoardPage() {
             setAnimals(data);
         };
 
-        fetchAnimals();
+        void fetchAnimals();
     }, []);
 
 
