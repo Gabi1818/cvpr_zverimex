@@ -1,7 +1,31 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+//import type { Metadata } from "next";
+//import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "./context/CartContext";
 
+interface Props {
+    children: React.ReactNode
+}
+
+const RootLayout: React.FC <Props> = ({ children } ) => {
+    return (
+
+        <html lang="tr">
+
+        <head />
+        <body>
+        <CartProvider>
+            {children}
+        </CartProvider>
+        </body>
+        </html>
+    )
+}
+
+export default RootLayout
+
+
+/*
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,3 +56,10 @@ export default function RootLayout({
     </html>
   );
 }
+
+ */
+
+
+
+
+

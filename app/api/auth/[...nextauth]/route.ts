@@ -1,14 +1,15 @@
 import { prisma } from '@/lib/prisma'
-import { session } from '@/lib/session'
 import { NextAuthOptions } from 'next-auth'
 import NextAuth from 'next-auth/next'
 import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from 'bcrypt'
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!
 
-const authOption: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     session: {
         strategy: 'jwt',
     },
@@ -17,47 +18,52 @@ const authOption: NextAuthOptions = {
             clientId: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
         }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Missing email or password");
+                }
+
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email },
+                });
+
+                if (!user || !user.password) {
+                    throw new Error("Invalid email or password");
+                }
+
+                const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+                if (!passwordMatch) {
+                    throw new Error("Invalid email or password");
+                }
+
+                return { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin };
+            },
+        }),
     ],
     callbacks: {
-        async signIn({ account, profile }) {
-            console.log(account)
-            if (!profile?.email) {
-                throw new Error('No profile')
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.isAdmin = user.isAdmin;
             }
-
-            await prisma.user.upsert({
-                where: {
-                    email: profile.email,
-                },
-                create: {
-                    email: profile.email,
-                    name: profile.name,
-                },
-                update: {
-                    name: profile.name,
-                },
-            })
-            return true
+            return token;
         },
-        session,
-        async jwt({ token, user, account, profile }) {
-            console.log(user)
-            console.log(account)
-            if (profile) {
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: profile.email,
-                    },
-                })
-                if (!user) {
-                    throw new Error('No user found')
-                }
-                token.id = user.id
+        async session({ session, token }) {
+            if (session.user) {
+                console.log(token);
+                session.user.id = token.id as string;
+                session.user.isAdmin = token.isAdmin as boolean;
             }
-            return token
+            return session;
         },
     },
-}
+};
 
-const handler = NextAuth(authOption)
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
