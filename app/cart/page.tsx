@@ -21,7 +21,8 @@ export default function CartPage() {
                     ))}
                 </ul>
             )}
-            <Link href="/dashboard">Back to shop</Link>
+            <p><Link href="/order">Finish order</Link></p>
+            <p><Link href="/dashboard">Back to shop</Link></p>
         </div>
     );
 }

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    ReactNode,
+} from "react";
 
 type Animal = {
     id: string;
@@ -15,12 +21,26 @@ type CartContextType = {
     cart: Animal[];
     addToCart: (animal: Animal) => void;
     removeFromCart: (id: string) => void;
+    setCart: React.Dispatch<React.SetStateAction<Animal[]>>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cart, setCart] = useState<Animal[]>([]);
+
+    // Load cart from localStorage on initial render
+    useEffect(() => {
+        const storedCart = localStorage.getItem("cart");
+        if (storedCart) {
+            setCart(JSON.parse(storedCart));
+        }
+    }, []);
+
+    // Save cart to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }, [cart]);
 
     const addToCart = (animal: Animal) => {
         setCart((prev) => [...prev, animal]);
@@ -31,7 +51,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+        <CartContext.Provider value={{ cart, addToCart, removeFromCart, setCart }}>
             {children}
         </CartContext.Provider>
     );
