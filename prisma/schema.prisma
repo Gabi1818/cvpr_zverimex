@@ -29,6 +29,7 @@ model Animal {
   available Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  image     String?
 }
 
 model Order {

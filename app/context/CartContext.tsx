@@ -21,7 +21,6 @@ type CartContextType = {
     cart: Animal[];
     addToCart: (animal: Animal) => void;
     removeFromCart: (id: string) => void;
-    setCart: React.Dispatch<React.SetStateAction<Animal[]>>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -51,7 +50,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, setCart }}>
+        <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
             {children}
         </CartContext.Provider>
     );

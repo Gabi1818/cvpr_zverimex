@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { name, price, category, age, available } = body;
+        const { name, price, category, age, available, image } = body;
 
         const animal = await prisma.animal.create({
             data: {
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
                 category,
                 age: Number(age),
                 available,
+                image: image || null,
             },
         });
 
@@ -31,14 +32,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed to create animal." }, { status: 500 });
     }
 }
-
-
 export async function GET() {
     try {
         const animals = await prisma.animal.findMany();
         return NextResponse.json(animals);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching animals:", error);
         return NextResponse.json({ error: "Failed to fetch animals" }, { status: 500 });
     }
 }

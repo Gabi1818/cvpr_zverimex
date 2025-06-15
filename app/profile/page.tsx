@@ -34,33 +34,39 @@ function ProfilePage() {
 
 
     return (
-        <div>
+        <div className="page-container">
             <h1>Update Profile</h1>
-            {message && <p>{message}</p>}
+            {message && <p className="success-message">{message}</p>}
+
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className="form-group">
                     <label>Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required/>
                 </div>
-                <div>
+
+                <div className="form-group">
                     <label>Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
                 </div>
-                <div>
+
+                <div className="form-group">
                     <label>New Password</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </div>
+
                 <button type="submit">Update Profile</button>
             </form>
-            <Link href="/dashboard">Back to Home</Link>
+
+            <Link href="/dashboard" className="back-link">Back to Home</Link>
         </div>
+
     );
 }
 
 export default function Profile() {
     return (
         <SessionProvider>
-            <ProfilePage />
+            <ProfilePage/>
         </SessionProvider>
     );
 }

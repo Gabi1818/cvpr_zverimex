@@ -5,6 +5,9 @@ import { useCart } from "@/app/context/CartContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 interface Animal {
     id: string;
     name: string;
@@ -12,6 +15,7 @@ interface Animal {
     category: string;
     age: number;
     available: boolean;
+    image?: string;
 }
 
 export default function AnimalPage() {
@@ -39,22 +43,39 @@ export default function AnimalPage() {
         fetchAnimal();
     }, [id]);
 
-    if (loading) return <p>Loading...</p>;
-    if (!animal) return <p>Animal not found.</p>;
+    if (loading) return <p className="p-4">Loading...</p>;
+    if (!animal) return <p className="p-4 text-red-500">Animal not found.</p>;
 
     return (
-        <div>
-            <h1>{animal.name}</h1>
-            <p>Price: ${animal.price}</p>
-            <p>Age: {animal.age}</p>
-            <p>Category: {animal.category}</p>
-            <p>Status: {animal.available ? "Available" : "Reserved"}</p>
+        <div className="max-w-md mx-auto min-h-screen flex items-center justify-center">
+            <Card>
+                <CardHeader>
+                    <CardTitle>{animal.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    {animal.image && (
+                        <img
+                            src={animal.image}
+                            alt={animal.name}
+                            className="w-full h-64 object-cover rounded-md mb-4"
+                        />
+                    )}
 
-            {animal.available && (
-                <button onClick={() => addToCart(animal)}>Add to Cart</button>
-            )}
-            <p><Link href="/dashboard">Back to shop</Link></p>
+                    <p><strong>Price:</strong> ${animal.price}</p>
+                    <p><strong>Age:</strong> {animal.age}</p>
+                    <p><strong>Category:</strong> {animal.category}</p>
+                    <p><strong>Status:</strong> {animal.available ? "Available" : "Reserved"}</p>
+
+                    {animal.available && (
+                        <Button onClick={() => addToCart(animal)} className="w-full">
+                            Add to Cart
+                        </Button>
+                    )}
+                    <Button variant="secondary" asChild className="w-full">
+                        <Link href="/dashboard">Back to Shop</Link>
+                    </Button>
+                </CardContent>
+            </Card>
         </div>
     );
 }
-

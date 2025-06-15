@@ -2,6 +2,7 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
+import './globals.css';
 
 interface Props {
     children: React.ReactNode

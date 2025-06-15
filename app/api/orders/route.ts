@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type Animal = {
+    id: string;
+    name: string;
+    price: number;
+    age: number;
+    category: string;
+    available: boolean;
+};
+
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, address, phone, payment, cart } = body;
@@ -17,7 +26,7 @@ export async function POST(req: NextRequest) {
                 phone,
                 payment,
                 items: {
-                    create: cart.map((animal: any) => ({
+                    create: cart.map((animal: Animal) => ({
                         animalId: animal.id,
                         name: animal.name,
                         price: animal.price,

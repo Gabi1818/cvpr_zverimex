@@ -23,3 +23,21 @@ export async function GET(
         return NextResponse.json({ error: "Failed to fetch animal" }, { status: 500 });
     }
 }
+
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const id = params.id;
+
+    try {
+        await prisma.animal.delete({
+            where: { id },
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Error deleting animal:", error);
+        return NextResponse.json({ error: "Failed to delete animal" }, { status: 500 });
+    }
+}

@@ -11,42 +11,53 @@ type Animal = {
     age: number;
     category: string;
     available: boolean;
+    image?: string | null;
 };
 
 function DashBoardPage() {
     const { data: session } = useSession();
     const [animals, setAnimals] = useState<Animal[]>([]);
 
-
     useEffect(() => {
         const fetchAnimals = async () => {
-            const res = await fetch("/api/animals", { method: "GET" });
-            const data = await res.json();
-            setAnimals(data);
+            try {
+                const res = await fetch("/api/animals", { method: "GET" });
+
+                if (!res.ok) {
+                    throw new Error(`API error: ${res.status}`);
+                }
+
+                const data = await res.json();
+                setAnimals(data);
+            } catch (err) {
+                console.error("Failed to fetch animals:", err);
+            }
         };
 
         void fetchAnimals();
     }, []);
 
 
-
     return (
-        <div>
-            <p><Link href="/profile">Go to Profile</Link></p>
-            <p><Link href="/cart">View Cart</Link></p>
+        <div className="dashboard-container">
+            <nav className="dashboard-nav">
+                <Link href="/profile">Go to Profile</Link>
+                <Link href="/cart">View Cart</Link>
+                {session?.user?.isAdmin && (
+                    <Link href="/admin/add-animal">Create Animal Poster</Link>
+                )}
+
+                {session?.user?.isAdmin && (
+                    <Link href="/admin/delete-animal">Delete Animal Poster</Link>
+                )}
 
 
-            {session?.user?.isAdmin && (
-                <div>
-                    <a href="/admin/add-animal">Create Animal Poster</a>
-                </div>
-            )}
+            </nav>
 
-            <h2>Animals</h2>
-            <ul>
+            <ul className="animal-list">
                 {animals.map((animal) => (
-                    <li key={animal.id}>
-                        <Link href={`/animals/${animal.id}`}>
+                    <li key={animal.id} className="animal-item">
+                        <Link href={`/animals/${animal.id}`} className="animal-link">
                             {animal.name}
                         </Link>
                     </li>
