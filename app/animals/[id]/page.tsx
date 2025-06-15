@@ -7,6 +7,8 @@ import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Image from 'next/image';
+
 
 interface Animal {
     id: string;
@@ -54,10 +56,12 @@ export default function AnimalPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                     {animal.image && (
-                        <img
+                        <Image
                             src={animal.image}
                             alt={animal.name}
-                            className="w-full h-64 object-cover rounded-md mb-4"
+                            width={400} // or whatever width you want
+                            height={256} // adjust this to your layout
+                            className="w-full object-cover rounded-md mb-4"
                         />
                     )}
 

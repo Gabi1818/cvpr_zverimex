@@ -3,10 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
     req: NextRequest,
-    //{ params }: { params: { id: string } }
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const id = (await params).id;
+    const id = (await params).id
 
     try {
         const animal = await prisma.animal.findUnique({
@@ -26,9 +25,9 @@ export async function GET(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const id = params.id;
+    const id = (await params).id
 
     try {
         await prisma.animal.delete({
